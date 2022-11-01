@@ -1,11 +1,10 @@
-
 {{#each comparisons}}
-<div class="comparison">
-    <h1>{{this.team1_id}}</h1>
-    <p>{{this.team1_win_pct}}</p>
-    <h1>{{this.team2_id}}</h1>
-    <p>{{this.team2_win_pct}}</p>
+  <div class="comparison">
+    <h1>{{this.p1.first_name}} {{this.p1.last_name}}</h1>
+    <p>{{this.pc.player1_points}}</p>
+    <h1>{{this.p2.first_name}} {{this.p2.last_name}}</h1>
+    <p>{{this.pc.player2_points}}</p>
 
     <h1>{{this.winner}}</h1>
-</div>
+  </div>
 {{/each}}
