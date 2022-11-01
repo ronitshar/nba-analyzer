@@ -12,8 +12,7 @@ CREATE TABLE Team (
     city VARCHAR(255) NOT NULL,
     conference VARCHAR(255) NOT NULL,
     team_name VARCHAR(255) NOT NULL,
-
-    PRIMARY KEY (team_id),
+    PRIMARY KEY (team_id)
 );
 
 CREATE TABLE GameStats (
@@ -23,11 +22,10 @@ CREATE TABLE GameStats (
     away_score int NOT NULL,
     season int NOT NULL,
     home_id int NOT NULL,
-    away_id int NOT NULL
-
+    away_id int NOT NULL,
     PRIMARY KEY (game_id),
     FOREIGN KEY (home_id) REFERENCES Team(team_id),
-    FOREIGN KEY (away_id) REFERENCES Team(team_id),
+    FOREIGN KEY (away_id) REFERENCES Team(team_id)
 );
 
 CREATE TABLE PlayerStats (
@@ -42,11 +40,9 @@ CREATE TABLE PlayerStats (
     fg_pct float NOT NULL,
     fg3_pct float NOT NULL,
     ft_pct float NOT NULL,
-
-
     PRIMARY KEY (player_id),
     FOREIGN KEY (player_id) REFERENCES Player(id),
-    FOREIGN KEY (game_id) REFERENCES GameStats(game_id),
+    FOREIGN KEY (game_id) REFERENCES GameStats(game_id)
 );
 
 CREATE TABLE TeamComparisons (
@@ -55,11 +51,10 @@ CREATE TABLE TeamComparisons (
     team1_win_pct float NOT NULL,
     team2_win_pct float NOT NULL,
     season_num int NOT NULL,
-
-
+    winner VARCHAR(255) NOT NULL,
     PRIMARY KEY (team1_id, team2_id),
     FOREIGN KEY (team1_id) REFERENCES Team(team_id),
-    FOREIGN KEY (team2_id) REFERENCES Team(team_id),
+    FOREIGN KEY (team2_id) REFERENCES Team(team_id)
 );
 
 CREATE TABLE PlayerComparisons (
@@ -68,12 +63,10 @@ CREATE TABLE PlayerComparisons (
     player1_points int NOT NULL,
     player2_points int NOT NULL,
     season_num int NOT NULL,
-
-
-
+    winner VARCHAR(255) NOT NULL,
     PRIMARY KEY (player1_id, player2_id),
     FOREIGN KEY (player1_id) REFERENCES Player(id),
-    FOREIGN KEY (player2_id) REFERENCES Player(id),
+    FOREIGN KEY (player2_id) REFERENCES Player(id)
 );
 -- Player(id, first_name, last_name)
 -- PlayerAttributes(id, position, height_feet, height_inches, weight_pounds, team_id)

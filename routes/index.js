@@ -18,4 +18,18 @@ router.get('/', async (req, res, next) => {
   res.render('index', { players: rows });
 });
 
+router.get('/viewcomparisons', async (req, res, next) => {
+  // var options = {
+  //   uri: "https://www.balldontlie.io/api/v1/players/237",
+  //   method: "GET",
+  //   json: true
+  // };
+  // const apiRes = await fetch("https://www.balldontlie.io/api/v1/players/237");
+  // const apiResJson = await apiRes.json();
+  const result = await db.promise().query("SELECT * FROM PlayerComparisons pc JOIN Player p1 ON  pc.player1_id == t1.id JOIN Team t2 ON tc.team2_id == t2.id");
+  const rows = result[0];
+  console.log(rows);
+  res.render('viewcomparisons', { comparisons: rows });
+});
+
 module.exports = router;
