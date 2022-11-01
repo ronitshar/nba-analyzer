@@ -1,10 +1,11 @@
 {{#each comparisons}}
   <div class="comparison">
-    <h1>{{this.p1.first_name}} {{this.p1.last_name}}</h1>
-    <p>{{this.pc.player1_points}}</p>
-    <h1>{{this.p2.first_name}} {{this.p2.last_name}}</h1>
-    <p>{{this.pc.player2_points}}</p>
+    <h1>Comparison {{@index}}</h1>
+    <h2>{{this.p1first_name}} {{this.p1last_name}}</h2>
+    <p>{{this.p1points}} average points</p>
+    <h2>{{this.p2first_name}} {{this.p2last_name}}</h2>
+    <p>{{this.p2points}} average points</p>
 
-    <h1>{{this.winner}}</h1>
+    <h2>Winner: {{this.winner}}</h2>
   </div>
 {{/each}}
