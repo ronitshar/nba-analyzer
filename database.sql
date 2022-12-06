@@ -84,12 +84,41 @@ CREATE TABLE FavoritePlayer (
 -- TeamComparisons(team1_id, team2_id)
 
 -- SP to find a team matching the name input
-DROP PROCEDURE IF EXISTS sp_find_team; -- if stored procedure already exists, overwrite it
+-- DROP PROCEDURE IF EXISTS sp_find_team; -- if stored procedure already exists, overwrite it
+-- DELIMITER //
+-- CREATE PROCEDURE sp_find_team (IN team_name varchar(100))
+--     BEGIN
+--         -- INSERT INTO result (select * from temp where platform_name = curr_platform_name and -- get first entry
+--         --             genre = curr_genre and game_publisher = curr_game_publisher limit 1);
+--         SELECT * FROM Team t WHERE t.team_name = team_name;
+--     END //
+-- DELIMITER ; 
+
+-- SP to insert into team comparisons table 
+DROP PROCEDURE IF EXISTS sp_insert_team_comparison; -- if stored procedure already exists, overwrite it
 DELIMITER //
-CREATE PROCEDURE sp_find_team (IN team_name varchar(100))
+CREATE PROCEDURE sp_insert_team_comparison (IN team1_id int, IN team2_id int, IN team1_win_pct float, IN team2_win_pct float, IN season_num int, IN winner VARCHAR(255))
     BEGIN
-        -- INSERT INTO result (select * from temp where platform_name = curr_platform_name and -- get first entry
-        --             genre = curr_genre and game_publisher = curr_game_publisher limit 1);
-        SELECT * FROM Team t WHERE t.team_name = team_name;
+        INSERT IGNORE INTO TeamComparisons VALUES(team1_id, team2_id, team1_win_pct, team2_win_pct, season_num, winner);
     END //
 DELIMITER ; 
+
+-- SP to insert into player comparisons table 
+DROP PROCEDURE IF EXISTS sp_insert_player_comparison; -- if stored procedure already exists, overwrite it
+DELIMITER //
+CREATE PROCEDURE sp_insert_player_comparison (IN player1_id int, IN player2_id int, IN player1_points int, IN player2_points int, IN winner VARCHAR(255))
+    BEGIN
+        INSERT IGNORE INTO PlayerComparisons VALUES(player1_id, player2_id, player1_points, player2_points, winner);
+    END //
+DELIMITER ; 
+
+CREATE TABLE PlayerComparisons (
+    player1_id int NOT NULL,
+    player2_id int NOT NULL,
+    player1_points int NOT NULL,
+    player2_points int NOT NULL,
+    winner VARCHAR(255) NOT NULL,
+    PRIMARY KEY (player1_id, player2_id),
+    FOREIGN KEY (player1_id) REFERENCES Player(id),
+    FOREIGN KEY (player2_id) REFERENCES Player(id)
+);
