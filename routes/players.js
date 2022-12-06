@@ -76,10 +76,10 @@ router.post("/compareTeams", async (req, res, next) => {
     );
 
   console.log(team1sql[0][0].team_name);
-  console.log(team1sql[0][0].team_name);
+  console.log(team2sql[0][0].team_name);
 
   const team1TotalWins = team1Wins[0][0].wins;
-  const team2TotalWins = player2pts[0][0].wins;
+  const team2TotalWins = team2Wins[0][0].wins;
 
   const winner =
     team1TotalWins > team2TotalWins
@@ -89,9 +89,12 @@ router.post("/compareTeams", async (req, res, next) => {
   const totalres = await db
     .promise()
     .query(
-      `INSERT INTO TeamComparisons VALUES(${team1id}, ${team2id}, ${
-        (team1TotalWins * 100.0) / 82 / 100
-      }, ${(team2TotalWins * 100.0) / 82 / 100}, "${winner}")`
+      `INSERT INTO TeamComparisons VALUES(${team1id}, ${team2id}, ${(
+        (team1TotalWins * 100) /
+        82.0
+      ).toFixed(2)}, ${((team2TotalWins * 100) / 82.0).toFixed(
+        2
+      )}, ${2021}, "${winner}")`
     );
 
   res.redirect("/viewTeamComparisons");
