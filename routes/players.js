@@ -62,7 +62,7 @@ router.post('/compare', async (req, res, next) => {
     const player1avgpts = player1pts[0][0].avgpts;
     const player2avgpts = player2pts[0][0].avgpts;
 
-    const winner = player1avgpts < player2avgpts ? player1sql[0][0].first_name + " " + player1sql[0][0].last_name : player2sql[0][0].first_name + " " + player2sql[0][0].last_name;
+    const winner = player1avgpts > player2avgpts ? player1sql[0][0].first_name + " " + player1sql[0][0].last_name : player2sql[0][0].first_name + " " + player2sql[0][0].last_name;
     /*TODO: check if comparison already added */
     const totalres = await db.promise().query(`INSERT INTO PlayerComparisons VALUES(${player1id}, ${player2id}, ${player1avgpts}, ${player2avgpts}, "${winner}")`);
 
