@@ -45,13 +45,16 @@ router.post("/compareTeams", async (req, res, next) => {
   const team1_name = req.body.team1;
   const team2_name = req.body.team2;
 
+  const get_teams_sp1 = `call sp_find_team(${team1_name})`;
+  const get_teams_sp2 = `call sp_find_team(${team2_name})`;
+
   // get players from DB
   const team1sql = await db
     .promise()
-    .query("SELECT * FROM Team t WHERE t.team_name = '" + team1_name + "'");
+    .query(get_teams_sp1);
   const team2sql = await db
     .promise()
-    .query("SELECT * FROM Team t WHERE t.team_name = '" + team2_name + "'");
+    .query(get_teams_sp2);
 
   const team1id = team1sql[0][0].team_id;
   const team2id = team2sql[0][0].team_id;
@@ -159,7 +162,7 @@ router.post("/compare", async (req, res, next) => {
   const totalres = await db
     .promise()
     .query(
-      `INSERT INTO PlayerComparisons VALUES(${player1id}, ${player2id}, ${player1avgpts}, ${player2avgpts}, "${winner}")`
+      `INSERT IGNORE INTO PlayerComparisons VALUES(${player1id}, ${player2id}, ${player1avgpts}, ${player2avgpts}, "${winner}")`
     );
 
   res.redirect("/viewcomparisons");

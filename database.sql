@@ -82,3 +82,14 @@ CREATE TABLE FavoritePlayer (
 -- GameStats(game_id, date, home_score, away_score, season, home_id,  away_id)
 -- PlayerStats(player_id, game_id, points, rebounds,  assists, blocks, steals, turnovers, fg_pct, fg3_pct, ft_pct) 
 -- TeamComparisons(team1_id, team2_id)
+
+-- SP to find a team matching the name input
+DROP PROCEDURE IF EXISTS sp_find_team; -- if stored procedure already exists, overwrite it
+DELIMITER //
+CREATE PROCEDURE sp_find_team (IN team_name varchar(100))
+    BEGIN
+        -- INSERT INTO result (select * from temp where platform_name = curr_platform_name and -- get first entry
+        --             genre = curr_genre and game_publisher = curr_game_publisher limit 1);
+        SELECT * FROM Team t WHERE t.team_name = team_name;
+    END //
+DELIMITER ; 
