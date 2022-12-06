@@ -239,4 +239,8 @@ router.post("/deleteFavorites", async (req, res, next) => {
   res.redirect("/viewFavoritesToDelete");
 });
 
+//compare Favorites
+
+
+
 module.exports = router;
