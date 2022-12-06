@@ -68,6 +68,15 @@ CREATE TABLE PlayerComparisons (
     FOREIGN KEY (player1_id) REFERENCES Player(id),
     FOREIGN KEY (player2_id) REFERENCES Player(id)
 );
+
+CREATE TABLE FavoritePlayer (
+    id int NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    team_id int NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (team_id) REFERENCES Team(team_id)
+);
 -- Player(id, first_name, last_name)
 -- PlayerAttributes(id, position, height_feet, height_inches, weight_pounds, team_id)
 -- Team(team_id, abbr, city, conference, division, team_name)
