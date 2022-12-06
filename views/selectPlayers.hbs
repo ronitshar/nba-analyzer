@@ -1,5 +1,6 @@
-<h1> Add a comparison: </h1>
+<h1> Add Comparisons:</h1>
 
+<h2>Player Comparisons:</h2>
 <form method="POST" action="/compare">
     <div>
        <em>
@@ -25,6 +26,35 @@
         </select>
     </div>
     <div class="submitbutton">
+        <button>Submit</button>
+    </div>
+</form>
+
+<h2>Team Comparisons</h2>
+<form method="POST" action="/compareTeams">
+    <div>
+        <em>
+           Select Teams to Compare!
+        </em> 
+        <br> </br>
+        <span>Team 1</span>
+        <select name="team1">
+            <option value="">Select team 1</option>
+            {{#each teams}}
+            <option>{{this.team_name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div>
+        <span>Team 2</span>
+        <select name="team2">
+            <option value="">Select team 2</option>
+            {{#each teams}}
+            <option>{{this.team_name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div>
         <button>Submit</button>
     </div>
 </form>
