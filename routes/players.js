@@ -70,4 +70,49 @@ router.post('/compare', async (req, res, next) => {
     res.redirect('/viewcomparisons');
 });
 
+/*View favorites page */
+router.get('/viewFavorites', async (req, res, next) => {
+    const result = await db.promise().query("SELECT * FROM Player");
+    const rows = result[0];
+    console.log(rows);
+    res.render('selectFavorites', { players: rows });
+});
+
+/*Select favorite player */
+router.post('/favorites', async (req, res, next) => {
+    const player1_name = req.body.player1;
+    const player1_firstName = player1_name.split(' ')[0];
+    const player1_lastName = player1_name.split(' ')[1];
+
+    const player1sql = await db.promise().query("SELECT * FROM Player p WHERE p.first_name = '" + player1_firstName + "' and p.last_name = '" + player1_lastName + "'");
+    const player1id = player1sql[0][0].id;
+    const player1team = player1sql[0][0].team_id;
+    //console.log()
+
+
+    const totalres = await db.promise().query(`INSERT INTO FavoritePlayer VALUES(${player1id}, "${player1_firstName}", "${player1_lastName}", "${player1team}")`);
+
+    res.redirect('/viewFavorites');
+});
+
+/*Get all favorites player */
+router.get('/viewFavoritesToDelete', async (req, res, next) => {
+    const result = await db.promise().query("SELECT * FROM FavoritePlayer");
+    const rows = result[0];
+    console.log(rows);
+    res.render('deleteFavorites', { players: rows });
+});
+
+router.post('/deleteFavorites', async (req, res, next) => {
+    const player1_name = req.body.player1;
+    const player1_firstName = player1_name.split(' ')[0];
+    const player1_lastName = player1_name.split(' ')[1];
+
+    const player1sql = await db.promise().query("DELETE FROM FavoritePlayer p WHERE p.first_name = '" + player1_firstName + "' and p.last_name = '" + player1_lastName + "'");
+
+    res.redirect('/viewFavoritesToDelete');
+});
+
+
+
 module.exports = router;
