@@ -163,6 +163,18 @@ router.post("/compare", async (req, res, next) => {
 });
 
 /*View favorites page */
+router.get("/viewTeamComparisons", async (req, res, next) => {
+  const result = await db.promise().query(`
+            SELECT t1.team_name team1name, t2.team_name team2name, tc.team1_win_pct team1pct, tc.team2_win_pct team2pct, tc.winner winner FROM TeamComparisons tc 
+            JOIN Team t1 ON t1.team_id = tc.team1_id 
+            JOIN Team t2 ON t2.team_id = tc.team2_id
+    `);
+  const rows = result[0];
+  console.log(rows);
+  res.render("viewTeams", { teams: rows });
+});
+
+/*View favorites page */
 router.get("/viewFavorites", async (req, res, next) => {
   const result = await db.promise().query("SELECT * FROM Player");
   const rows = result[0];

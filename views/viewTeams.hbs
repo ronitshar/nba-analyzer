@@ -1,0 +1,11 @@
+{{#each teams}}
+  <div class="comparison">
+    <h1>Comparison {{@index}}</h1>
+    <h2>{{this.team1name}}</h2>
+    <p>Team 1 average winning percentage: {{this.team1pct}}</p>
+    <h2> {{this.team2name}}</h2>
+    <p>Team 1 average winning percentage: {{this.team2pct}}</p>
+
+    <h2>Winner: {{this.winner}}</h2>
+  </div>
+{{/each}}
