@@ -52,17 +52,9 @@ router.get("/viewcomparisons", async (req, res, next) => {
   res.render("viewcomparisons", { comparisons: rows, players: favrows });
 });
 
-let favPlayer = "";
-router.get("/favPlayerComparisons", async (req, res, next) => {
-  // var options = {
-  //   uri: "https://www.balldontlie.io/api/v1/players/237",
-  //   method: "GET",
-  //   json: true
-  // };
-  // const apiRes = await fetch("https://www.balldontlie.io/api/v1/players/237");
-  // const apiResJson = await apiRes.json();
-  // const favPlayer = req.body.favPlayer;
+router.post("/favPlayerComparisons", async (req, res, next) => {
   console.log(req.body.favPlayer);
+  let favPlayer = req.body.favPlayer;
   const player_firstName = favPlayer.split(" ")[0];
   const player_lastName = favPlayer.split(" ")[1];
   const favplayersql = await db
@@ -80,7 +72,7 @@ router.get("/favPlayerComparisons", async (req, res, next) => {
   const favPlayerComparisons = await db
     .promise()
     .query(
-      "SELECT p1.first_name p1_first_name, p1.last_name p1_last_name, p2.first_name p2_first_name, p2.last_name p2_last_name, ps.player1_points, ps.player2_points, ps.winner  FROM PlayerComparisons ps JOIN Player p1 ON p1.id = ps.player1_id JOIN Player p2 ON p2.id = ps.player2_id WHERE ps.player1_id = " +
+      "SELECT p1.first_name p1first_name, p1.last_name p1last_name, p2.first_name p2first_name, p2.last_name p2last_name, ps.player1_points p1points, ps.player2_points p2points, ps.winner  FROM PlayerComparisons ps JOIN Player p1 ON p1.id = ps.player1_id JOIN Player p2 ON p2.id = ps.player2_id WHERE ps.player1_id = " +
         favplayerid +
         " OR ps.player2_id = " +
         favplayerid
@@ -88,10 +80,6 @@ router.get("/favPlayerComparisons", async (req, res, next) => {
   const rows = favPlayerComparisons[0];
 
   res.render("favPlayerComparisons", { comparisons: rows });
-});
-router.post("/favPlayerComparisons", async (req, res, next) => {
-  favPlayer = req.body.favPlayer;
-  res.redirect("/favPlayerComparisons");
 });
 
 function propertiesToArray(obj) {
