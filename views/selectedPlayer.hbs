@@ -1,0 +1,29 @@
+<a href="/">
+  <button class="btn btn-primary btn-lg">Select Players</button>
+</a>
+<a href="/viewcomparisons">
+  <button class="btn btn-primary btn-lg">View Player Comparisons</button>
+</a>
+<a href="/viewFavorites">
+  <button class="btn btn-primary btn-lg">Select Favorites</button>
+</a>
+<a href="/viewFavoritesToDelete">
+  <button class="btn btn-primary btn-lg">Delete Favorites</button>
+</a>
+
+<a href="/viewTeamComparisons">
+  <button class="btn btn-primary btn-lg">View Team Comparisons</button>
+</a>
+
+{{#each players}}
+  <div class="comparison">
+    <h1>Player Stats</h1>
+    <h2>{{this.first_name}} {{this.last_name}}</h2>
+    <p><strong>Average Points:</strong> {{this.points}}</p>
+    <p><strong>Average Assists:</strong> {{this.assists}}</p>
+    <p><strong>Average Rebounds:</strong> {{this.rebounds}}</p>
+    <p><strong>Average Blocks:</strong> {{this.blocks}}</p>
+    <p><strong>Average Steals:</strong> {{this.steals}}</p>
+    <p><strong>Average Turnovers:</strong> {{this.turnovers}}</p>
+  </div>
+{{/each}}

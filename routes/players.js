@@ -302,4 +302,33 @@ router.post("/deleteFavorites", async (req, res, next) => {
   res.redirect("/viewFavoritesToDelete");
 });
 
+router.post("/selectPlayer", async (req, res, next) => {
+  const player_name = req.body.player;
+  const player_firstName = player_name.split(" ")[0];
+  const player_lastName = player_name.split(" ")[1];
+
+  const playersql = await db
+    .promise()
+    .query(
+      "SELECT * FROM Player p WHERE p.first_name = '" +
+        player_firstName +
+        "' and p.last_name = '" +
+        player_lastName +
+        "'"
+    );
+
+  const playerRows = playersql[0];
+  const playerid = playersql[0][0].id;
+
+  const playerStats = await db
+    .promise()
+    .query(
+      "SELECT ROUND(AVG(points), 2) points, ROUND(AVG(assists), 2) assists, ROUND(AVG(rebounds), 2) rebounds, ROUND(AVG(blocks), 2) blocks, ROUND(AVG(steals), 2) steals, ROUND(AVG(turnovers), 2) turnovers, p.first_name, p.last_name FROM PlayerStats ps JOIN Player p ON ps.player_id = p.id WHERE ps.player_id = " +
+        playerid
+    );
+
+  const rows = playerStats[0];
+  res.render("selectedPlayer", { players: rows });
+});
+
 module.exports = router;
