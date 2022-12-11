@@ -2,6 +2,7 @@ var express = require("express");
 const { registerHelper } = require("hbs");
 var router = express.Router();
 var fetch = require("node-fetch");
+const { beginTransaction, commit } = require("../database");
 const db = require("../database");
 
 /* GET players page. */
@@ -119,12 +120,14 @@ router.post("/compareTeams", async (req, res, next) => {
   const team1Wins = await db
     .promise()
     .query(
+      
       "SELECT COUNT(*) wins FROM GameStats gs WHERE gs.home_id = " +
         team1id +
         " AND gs.home_score > gs.away_score OR gs.away_id = " +
         team1id +
         " AND gs.away_score > gs.home_score"
     );
+
   const team2Wins = await db
     .promise()
     .query(
@@ -147,11 +150,16 @@ router.post("/compareTeams", async (req, res, next) => {
       : team2sql[0][0].team_name;
 
   /* sp for inserting team comparison */
+
+  //transaction for comparing the teams based off their win percentage
+
+  beginTransaction;
   const sp_insert_team_comparison = `call sp_insert_team_comparison(${team1id}, ${team2id}, 
         ${((team1TotalWins * 100) / 82.0).toFixed(2)}, ${(
     (team2TotalWins * 100) /
     82.0
   ).toFixed(2)}, ${2021}, "${winner}")`;
+  commit;
 
   const totalres = await db
     .promise()
@@ -267,11 +275,31 @@ router.post("/favorites", async (req, res, next) => {
   const player1team = player1sql[0][0].team_id;
   //console.log()
 
-  const totalres = await db
+  await db
     .promise()
     .query(
-      `INSERT INTO FavoritePlayer VALUES(${player1id}, "${player1_firstName}", "${player1_lastName}", "${player1team}")`
+      `SET TRANSACTION ISOLATION LEVEL READ COMMITTED;`
     );
+  await db
+    .promise()
+    .query(
+      `START TRANSACTION;`
+    );
+    await db
+    .promise()
+    .query(
+        `INSERT INTO FavoritePlayer VALUES(${player1id}, "${player1_firstName}", "${player1_lastName}", "${player1team}")`
+    );
+    await db
+    .promise()
+    .query(
+        `COMMIT;`
+    );
+    
+  
+
+  
+  
 
   res.redirect("/viewFavorites");
 });
