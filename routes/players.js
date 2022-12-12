@@ -37,12 +37,15 @@ router.get("/viewcomparisons", async (req, res, next) => {
   // };
   // const apiRes = await fetch("https://www.balldontlie.io/api/v1/players/237");
   // const apiResJson = await apiRes.json();
+  await db.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+  db.beginTransaction();
   const result = await db.promise()
     .query(`SELECT pc.player1_points p1points, pc.winner,
     pc.player2_points p2points, p1.first_name p1first_name, p1.last_name p1last_name, p2.first_name p2first_name, p2.last_name p2last_name 
     FROM PlayerComparisons pc 
     JOIN Player p1 ON pc.player1_id = p1.id 
-    JOIN Player p2 ON pc.player2_id = p2.id`);
+    JOIN Player p2 ON pc.player2_id = p2.id;`);
+    db.commit();
   const rows = result[0];
   console.log(rows);
 
@@ -61,11 +64,13 @@ router.post("/favPlayerComparisons", async (req, res, next) => {
   const favplayersql = await db
     .promise()
     .query(
+      "BEGIN TRANSACTION READ ONLY;" + 
       "SELECT * FROM Player p WHERE p.first_name = '" +
         player_firstName +
         "' and p.last_name = '" +
         player_lastName +
-        "'"
+        "';" +
+      "COMMIT;"
     );
 
   const favplayerid = favplayersql[0][0].id;
@@ -83,23 +88,7 @@ router.post("/favPlayerComparisons", async (req, res, next) => {
   res.render("favPlayerComparisons", { comparisons: rows });
 });
 
-function propertiesToArray(obj) {
-  const isObject = (val) =>
-    val && typeof val === "object" && !Array.isArray(val);
 
-  const addDelimiter = (a, b) => (a ? `${a}.${b}` : b);
-
-  const paths = (obj = {}, head = "") => {
-    return Object.entries(obj).reduce((product, [key, value]) => {
-      let fullPath = addDelimiter(head, key);
-      return isObject(value)
-        ? product.concat(paths(value, fullPath))
-        : product.concat(fullPath);
-    }, []);
-  };
-
-  return paths(obj);
-}
 
 router.post("/compareTeams", async (req, res, next) => {
   const team1_name = req.body.team1;
@@ -113,7 +102,6 @@ router.post("/compareTeams", async (req, res, next) => {
     .promise()
     .query(`SELECT * FROM Team t WHERE t.team_name = '${team2_name}';`);
 
-  console.log("path is" + propertiesToArray(team1sql));
   const team1id = team1sql[0][0].team_id;
   const team2id = team2sql[0][0].team_id;
 
@@ -153,13 +141,13 @@ router.post("/compareTeams", async (req, res, next) => {
 
   //transaction for comparing the teams based off their win percentage
 
-  beginTransaction;
-  const sp_insert_team_comparison = `call sp_insert_team_comparison(${team1id}, ${team2id}, 
+  const sp_insert_team_comparison = `
+    call sp_insert_team_comparison(${team1id}, ${team2id}, 
         ${((team1TotalWins * 100) / 82.0).toFixed(2)}, ${(
     (team2TotalWins * 100) /
     82.0
-  ).toFixed(2)}, ${2021}, "${winner}")`;
-  commit;
+  ).toFixed(2)}, ${2021}, "${winner}")
+  `;
 
   const totalres = await db
     .promise()
@@ -238,22 +226,33 @@ router.post("/compare", async (req, res, next) => {
 
 /*View favorites page */
 router.get("/viewTeamComparisons", async (req, res, next) => {
+  await db.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+  db.beginTransaction();
   const result = await db.promise().query(`
             SELECT t1.team_name team1name, t2.team_name team2name, tc.team1_win_pct team1pct, tc.team2_win_pct team2pct, tc.winner winner FROM TeamComparisons tc 
             JOIN Team t1 ON t1.team_id = tc.team1_id 
             JOIN Team t2 ON t2.team_id = tc.team2_id
     `);
+  db.commit();
+
   const rows = result[0];
   console.log(rows);
   res.render("viewTeams", { teams: rows });
 });
 
 /*View favorites page */
-router.get("/viewFavorites", async (req, res, next) => {
+router.get("/selectFavorites", async (req, res, next) => {
   const result = await db.promise().query("SELECT * FROM Player");
   const rows = result[0];
   console.log(rows);
   res.render("selectFavorites", { players: rows });
+});
+
+router.get("/viewFavorites", async (req, res, next) => {
+  const result = await db.promise().query("SELECT * FROM FavoritePlayer");
+  const rows = result[0];
+  console.log(rows);
+  res.render("viewFavorites", { favorites: rows });
 });
 
 /*Select favorite player */
